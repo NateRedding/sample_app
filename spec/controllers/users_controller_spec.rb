@@ -151,6 +151,7 @@ describe UsersController do
         put(:update, :id => @user, :user => @attr)
         response.should have_selector('title', :content => "Edit user")
       end
+
     end
 
     describe "success" do
@@ -172,7 +173,9 @@ describe UsersController do
         put(:update, :id => @user, :user => @attr)
         flash[:success].should =~ /updated/
       end
+
     end
+
   end
 
   describe "authentication of edit/update actions" do
@@ -181,18 +184,43 @@ describe UsersController do
       @user = FactoryGirl.create(:user)
     end
 
-    it "should deny access to edit" do
-      get(:edit, :id => @user)
-      response.should redirect_to(signin_path)
-      flash[:notice].should =~ /sign in/i
+    describe "for non-signed in users" do
+      it "should deny access to edit" do
+        get(:edit, :id => @user)
+        response.should redirect_to(signin_path)
+        flash[:notice].should =~ /sign in/i
+      end
+
+
+      it "should deny access to update" do
+        put(:update, :id => @user, :user => {})
+        response.should redirect_to(signin_path)
+        flash[:notice].should =~ /sign in/i
+      end
+
     end
 
+    describe "for signed in users" do
+      before(:each) do
+        wrong_user = FactoryGirl.create(:user, :email => 'user@example.net')
+        controller.sign_in(wrong_user)
+      end
 
-    it "should deny access to update" do
-      put(:update, :id => @user, :user => {})
-      response.should redirect_to(signin_path)
-      flash[:notice].should =~ /sign in/i
+      it "should require the proper user for edit" do
+        get(:edit, :id => @user)
+        response.should redirect_to(root_path)
+        #flash[:notice].should =~ /sign in/i
+      end
+
+
+      it "should require the proper user for update" do
+        put(:update, :id => @user, :user => {})
+        response.should redirect_to(root_path)
+        #flash[:notice].should =~ /sign in/i
+      end
+
     end
 
   end
+
 end
