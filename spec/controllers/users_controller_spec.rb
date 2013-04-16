@@ -18,8 +18,10 @@ describe UsersController do
         @user = FactoryGirl.create(:user)
         controller.sign_in(@user)
 
-        FactoryGirl.create(:user, :email => "another@example.net")
-        FactoryGirl.create(:user, :email => "someother@example.net")
+        30.times do
+          FactoryGirl.create(:user, :email => FactoryGirl.generate(:email))
+        end
+
       end
 
       it "should be successful" do
@@ -36,6 +38,14 @@ describe UsersController do
         User.all.each do |user|
           response.should have_selector('li', :content => user.name)
         end
+      end
+
+      it "should paginate users" do
+        get :index
+        response.should have_selector("div.pagination")
+        response.should have_selector("span.disabled", :content => "Previous")
+        response.should have_selector("a", :href => "/users?page=2", :content => "2")
+        response.should have_selector("a", :href => "/users?page=2", :content => "Next")
       end
     end
 
