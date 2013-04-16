@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '3.2.13'
 gem 'gravatar_image_tag', '1.1.3'
 gem 'will_paginate', '3.0.4'
+gem 'jquery-rails', '2.2.1'
 
 group :production do
   gem 'pg', '0.15.0'
