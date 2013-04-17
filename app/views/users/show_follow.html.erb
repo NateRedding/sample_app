@@ -4,9 +4,11 @@
       <h1><%= @title %></h1>
 
       <% if @users.any? %>
+        <%= will_paginate %>
         <ul class="users">
           <%= render(@users) %>
         </ul>
+        <%= will_paginate %>
       <% end %>
     </td>
     <td class="sidebar">
@@ -18,6 +20,7 @@
         <% @users.each do |user| %>
           <%= link_to(gravatar_for(user, :size => 30), user) %>
         <% end %>
+        <%= will_paginate %>
       <% end %>
     </td>
   </tr>
